@@ -7,10 +7,10 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import { CashFlowContext } from '../context/context';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {CashFlowContext} from '../context/context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import RNPickerSelect from 'react-native-picker-select';
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 export default function AddData(props) {
   const [formState, setFormState] = React.useState({
     name: '',
@@ -19,13 +19,13 @@ export default function AddData(props) {
     color: Math.floor(Math.random() * 16777215).toString(16),
   });
 
-  const { state, setState } = React.useContext(CashFlowContext);
+  const {state, setState} = React.useContext(CashFlowContext);
 
   return (
     <KeyboardAwareScrollView>
       <ImageBackground
         source={require('../assets/bg4.jpg')}
-        style={{ height, width, justifyContent: 'center' }}>
+        style={{height, width, justifyContent: 'center'}}>
         <View
           style={{
             height: height * 0.5,
@@ -34,7 +34,7 @@ export default function AddData(props) {
             borderRadius: height * 0.03,
             elevation: 4,
             shadowColor: '#000',
-            shadowOffset: { width: 1, height: 1 },
+            shadowOffset: {width: 1, height: 1},
             shadowOpacity: 0.5,
             shadowRadius: 5,
             justifyContent: 'center',
@@ -48,7 +48,7 @@ export default function AddData(props) {
               fontWeight: 'bold',
               color: '#010',
               shadowColor: '#fff',
-              shadowOffset: { height: 1, width: 1 },
+              shadowOffset: {height: 1, width: 1},
               shadowOpacity: 0.5,
               shadowRadius: 6,
               padding: 10,
@@ -56,7 +56,7 @@ export default function AddData(props) {
               borderRadius: 10,
             }}>
             Add Transaction
-        </Text>
+          </Text>
           <View
             style={{
               width: width * 0.8,
@@ -101,7 +101,6 @@ export default function AddData(props) {
             />
           </View>
 
-
           <View
             style={{
               width: width * 0.8,
@@ -113,25 +112,21 @@ export default function AddData(props) {
               justifyContent: 'center',
               borderWidth: 2,
             }}>
-
             <RNPickerSelect
               value={formState.category}
-              onValueChange={(value) => setFormState({
-                ...formState,
-                category: value,
-              })}
+              useNativeAndroidPickerStyle={false}
+              onValueChange={value =>
+                setFormState({
+                  ...formState,
+                  category: value,
+                })
+              }
               items={[
-                { label: 'Income', value: 'income' },
-                { label: 'Expenses', value: 'expenditure' },
+                {label: 'Income', value: 'income'},
+                {label: 'Expenses', value: 'expenditure'},
               ]}
             />
-
-
-
           </View>
-
-
-
 
           <TouchableOpacity
             onPress={() => {
@@ -164,7 +159,7 @@ export default function AddData(props) {
                 borderRadius: 10,
               }}>
               Submit
-          </Text>
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -183,9 +178,8 @@ export default function AddData(props) {
                 borderRadius: 10,
               }}>
               cancel
-          </Text>
+            </Text>
           </TouchableOpacity>
-
         </View>
       </ImageBackground>
     </KeyboardAwareScrollView>

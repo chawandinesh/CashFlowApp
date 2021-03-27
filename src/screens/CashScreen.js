@@ -111,23 +111,24 @@ export default function CashScreen(props) {
       </View>
       <ScrollView>
         {displayChart ? (
-          <Animated.View
-            style={{
-              height: 'auto',
-              width: width * 0.97,
-              alignItems: 'center',
-              borderRadius: height * 0.03,
-              elevation: 4,
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.5,
-              shadowRadius: 5,
-              alignSelf: 'center',
-              paddingVertical: 10,
-              opacity: fadeAnim,
-              backgroundColor: 'rgba(0,0,0,0.8)',
-            }}>
-            {categorySelect === 'Income' ? (
+          categorySelect === 'Income' && data.incomeData.length ? (
+            <Animated.View
+              style={{
+                height: 'auto',
+                width: width * 0.97,
+                alignItems: 'center',
+                borderRadius: height * 0.03,
+                elevation: 4,
+                shadowColor: '#000',
+                shadowOffset: {width: 1, height: 1},
+                shadowOpacity: 0.5,
+                shadowRadius: 5,
+                alignSelf: 'center',
+                paddingVertical: 10,
+                opacity: fadeAnim,
+                backgroundColor: 'rgba(0,0,0,0.8)',
+              }}>
+              {/* {categorySelect === 'Income' ? ( */}
               <PieChart
                 data={data.incomeData}
                 width={width}
@@ -139,7 +140,25 @@ export default function CashScreen(props) {
                 center={[0, 0]}
                 absolute
               />
-            ) : categorySelect === 'Expenditure' ? (
+            </Animated.View>
+          ) : categorySelect === 'Expenditure' &&
+            data.expenditureData.length ? (
+            <Animated.View
+              style={{
+                height: 'auto',
+                width: width * 0.97,
+                alignItems: 'center',
+                borderRadius: height * 0.03,
+                elevation: 4,
+                shadowColor: '#000',
+                shadowOffset: {width: 1, height: 1},
+                shadowOpacity: 0.5,
+                shadowRadius: 5,
+                alignSelf: 'center',
+                paddingVertical: 10,
+                opacity: fadeAnim,
+                backgroundColor: 'rgba(0,0,0,0.8)',
+              }}>
               <PieChart
                 data={data.expenditureData}
                 width={width}
@@ -151,11 +170,11 @@ export default function CashScreen(props) {
                 center={[0, 0]}
                 absolute
               />
-            ) : null}
-          </Animated.View>
+            </Animated.View>
+          ) : null
         ) : null}
 
-        {categorySelect === 'Income' ? (
+        {categorySelect === 'Income' && data.incomeData.length ? (
           <View
             style={{
               height: height * 0.2,
@@ -201,7 +220,7 @@ export default function CashScreen(props) {
               </Text>
             </View>
           </View>
-        ) : categorySelect === 'Expenditure' ? (
+        ) : categorySelect === 'Expenditure' && data.expenditureData.length ? (
           <View
             style={{
               height: height * 0.2,
@@ -251,7 +270,7 @@ export default function CashScreen(props) {
 
         {/* table */}
 
-        {categorySelect === 'Income' ? (
+        {categorySelect === 'Income' && data.incomeData.length ? (
           <View
             style={{
               height: 'auto',
@@ -309,7 +328,7 @@ export default function CashScreen(props) {
               />
             </DataTable>
           </View>
-        ) : categorySelect === 'Expenditure' ? (
+        ) : categorySelect === 'Expenditure' && data.expenditureData.length ? (
           <View
             style={{
               height: 'auto',
@@ -366,6 +385,63 @@ export default function CashScreen(props) {
                 label="1-2 of 6"
               />
             </DataTable>
+          </View>
+        ) : null}
+        {categorySelect === 'Expenditure' && !data.expenditureData.length ? (
+          <View
+            style={{
+              height: height * 0.6,
+              width: width,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                height: height * 0.3,
+                width: width * 0.8,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderRadius: height * 0.03,
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: height * 0.04,
+                  fontWeight: 'bold',
+                  color: '#fff',
+                }}>
+                No record found {'\n'}
+                Please click on add transaction
+              </Text>
+            </View>
+          </View>
+        ) : categorySelect === 'Income' && !data.incomeData.length ? (
+          <View
+            style={{
+              height: height * 0.6,
+              width: width,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                height: height * 0.3,
+                width: width * 0.8,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderRadius: height * 0.03,
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: height * 0.04,
+                  fontWeight: 'bold',
+                  color: '#fff',
+                }}>
+                No record found {'\n'}
+                Please click on add transaction
+              </Text>
+            </View>
           </View>
         ) : null}
 
