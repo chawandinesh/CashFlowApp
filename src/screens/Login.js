@@ -69,7 +69,7 @@ export default function Login(props) {
   };
   return (
     <ImageBackground
-      style={{height, width}}
+      style={{height, width, paddingTop: height * 0.05}}
       source={require('../assets/bg6.jpg')}>
       <View
         style={{

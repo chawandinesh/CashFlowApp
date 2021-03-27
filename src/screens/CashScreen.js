@@ -64,7 +64,7 @@ export default function CashScreen(props) {
   return (
     <ImageBackground
       source={require('../assets/bg5.jpg')}
-      style={{height, width}}>
+      style={{height, width, paddingTop: height * 0.05}}>
       <View
         style={{
           height: height * 0.1,
