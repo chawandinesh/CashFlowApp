@@ -11,7 +11,7 @@ export default function Routes() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName={'Login'}>
+        initialRouteName={'CashScreen'}>
         <Stack.Screen name="CashScreen" component={CashScreen} />
         <Stack.Screen name="AddDataScreen" component={AddDataScreen} />
         <Stack.Screen name="Login" component={Login} />
