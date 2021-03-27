@@ -11,13 +11,28 @@ import {
 import {Icon, BottomSheet, Divider} from 'react-native-elements';
 import {PieChart} from 'react-native-chart-kit';
 import {DataTable} from 'react-native-paper';
+import {CashFlowContext} from '../context/context';
 const {height, width} = Dimensions.get('window');
 
-export default function CashScreen() {
+export default function CashScreen(props) {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const [displayChart, setDisplayChart] = React.useState(false);
+  const [displayChart, setDisplayChart] = React.useState(true);
+  const {state, setState} = React.useContext(CashFlowContext);
   const [categorySelect, setCategorySelect] = React.useState('Income');
   const [showBottomSheet, setShowBottomSheet] = React.useState(false);
+
+  const data = {
+    incomeData: state.transactions
+      .filter(e => e.category === 'income')
+      .map(e => {
+        return {...e, price: JSON.parse(e.price)};
+      }),
+    expenditureData: state.transactions
+      .filter(e => e.category === 'expenditure')
+      .map(e => {
+        return {...e, price: JSON.parse(e.price)};
+      }),
+  };
   const chartConfig = {
     backgroundColor: '#e26a00',
     backgroundGradientFrom: '#fb8c00',
@@ -35,102 +50,20 @@ export default function CashScreen() {
     },
   };
 
+  React.useEffect(() => {
+    showChart();
+  }, []);
+
   const showChart = () => {
-    setDisplayChart(!displayChart);
-    if (displayChart) {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-    } else if (!displayChart) {
-      //   console.log('notok');
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
-    }
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
   };
-
-  const incomeData = [
-    {
-      name: 'Seoul',
-      population: 21500000,
-      color: 'rgba(131, 167, 234, 1)',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'Toronto',
-      population: 2800000,
-      color: '#F00',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'Beijing',
-      population: 527612,
-      color: 'red',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'New York',
-      population: 8538000,
-      color: '#877',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'Moscow',
-      population: 11920000,
-      color: 'rgb(0, 0, 255)',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-  ];
-
-  const expenditureData = [
-    {
-      name: 'shopping',
-      population: 210000,
-      color: 'rgba(131, 167, 234, 1)',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'netbills',
-      population: 2800000,
-      color: '#F00',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'houserent',
-      population: 527612,
-      color: 'red',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'wifi',
-      population: 8538000,
-      color: '#877',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-    {
-      name: 'others',
-      population: 11920000,
-      color: 'rgb(0, 0, 255)',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    },
-  ];
   return (
     <ImageBackground
-      source={require('../assets/back.png')}
+      source={require('../assets/bg5.jpg')}
       style={{height, width}}>
       <View
         style={{
@@ -145,22 +78,21 @@ export default function CashScreen() {
             width: width * 0.97,
             borderRadius: height * 0.03,
             alignSelf: 'center',
-            backgroundColor: '#5765EE',
+            backgroundColor: '#5BF8FD',
             alignItems: 'center',
-            //   width: width,
             flexDirection: 'row',
             justifyContent: 'space-around',
           }}>
           <Icon
             name="menu"
             type="entypo"
-            color="#fff"
+            color="#000"
             onPress={() => setShowBottomSheet(true)}
           />
           <Text
             style={{
               fontSize: height * 0.03,
-              color: '#add',
+              color: '#343',
               fontWeight: 'bold',
             }}>
             {categorySelect}
@@ -169,8 +101,11 @@ export default function CashScreen() {
           <Icon
             name="graph-pie"
             type="foundation"
-            color="#fff"
-            onPress={() => showChart()}
+            color="#000"
+            onPress={() => {
+              setDisplayChart(!displayChart);
+              showChart();
+            }}
           />
         </View>
       </View>
@@ -190,15 +125,15 @@ export default function CashScreen() {
               alignSelf: 'center',
               paddingVertical: 10,
               opacity: fadeAnim,
-              backgroundColor: 'rgba(255,255,255,0.5)',
+              backgroundColor: 'rgba(0,0,0,0.8)',
             }}>
             {categorySelect === 'Income' ? (
               <PieChart
-                data={incomeData}
+                data={data.incomeData}
                 width={width}
                 height={220}
                 chartConfig={chartConfig}
-                accessor={'population'}
+                accessor={'price'}
                 backgroundColor={'transparent'}
                 paddingLeft={'0'}
                 center={[0, 0]}
@@ -206,11 +141,11 @@ export default function CashScreen() {
               />
             ) : categorySelect === 'Expenditure' ? (
               <PieChart
-                data={expenditureData}
+                data={data.expenditureData}
                 width={width}
                 height={220}
                 chartConfig={chartConfig}
-                accessor={'population'}
+                accessor={'price'}
                 backgroundColor={'transparent'}
                 paddingLeft={'0'}
                 center={[0, 0]}
@@ -236,7 +171,7 @@ export default function CashScreen() {
               justifyContent: 'center',
               alignSelf: 'center',
               alignItems: 'center',
-              backgroundColor: 'rgba(255,244,255, 0.5)',
+              backgroundColor: 'rgba(255,244,255, 0.8)',
             }}>
             <Text
               style={{
@@ -257,7 +192,12 @@ export default function CashScreen() {
                   fontWeight: 'bold',
                   color: 'darkgreen',
                 }}>
-                $897.88
+                {data.incomeData.length
+                  ? '$' +
+                    data.incomeData.reduce((acc, val) => {
+                      return acc + val.price;
+                    }, 0)
+                  : null}
               </Text>
             </View>
           </View>
@@ -277,7 +217,7 @@ export default function CashScreen() {
               justifyContent: 'center',
               alignSelf: 'center',
               alignItems: 'center',
-              backgroundColor: 'rgba(255,244,255, 0.5)',
+              backgroundColor: 'rgba(255,244,255, 0.8)',
             }}>
             <Text
               style={{
@@ -298,7 +238,12 @@ export default function CashScreen() {
                   fontWeight: 'bold',
                   color: 'darkred',
                 }}>
-                $947.88
+                {data.expenditureData.length
+                  ? '$' +
+                    data.expenditureData.reduce((acc, val) => {
+                      return acc + val.price;
+                    }, 0)
+                  : null}
               </Text>
             </View>
           </View>
@@ -322,28 +267,37 @@ export default function CashScreen() {
               justifyContent: 'center',
               alignSelf: 'center',
               alignItems: 'center',
-              backgroundColor: 'rgba(255,244,255, 0.5)',
+              backgroundColor: 'rgba(255,244,255, 0.8)',
             }}>
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title>Income Category</DataTable.Title>
                 <DataTable.Title numeric>Amount</DataTable.Title>
+                <DataTable.Title numeric>actions</DataTable.Title>
               </DataTable.Header>
 
-              <DataTable.Row>
-                <DataTable.Cell>Frozen yogurt</DataTable.Cell>
-                <DataTable.Cell numeric>159</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-                <DataTable.Cell numeric>237</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-                <DataTable.Cell numeric>237</DataTable.Cell>
-              </DataTable.Row>
+              {data.incomeData.map((e, idx) => {
+                return (
+                  <DataTable.Row key={idx}>
+                    <DataTable.Cell>{e.name}</DataTable.Cell>
+                    <DataTable.Cell numeric>{e.price}</DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {/* sdfk */}
+                      <TouchableOpacity
+                        onPress={() =>
+                          setState({
+                            ...state,
+                            transactions: state.transactions.filter(
+                              each => each.id !== e.id,
+                            ),
+                          })
+                        }>
+                        <Icon name="close" type="ionicon" color="red" />
+                      </TouchableOpacity>
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                );
+              })}
 
               <DataTable.Pagination
                 page={0}
@@ -371,28 +325,37 @@ export default function CashScreen() {
               justifyContent: 'center',
               alignSelf: 'center',
               alignItems: 'center',
-              backgroundColor: 'rgba(255,244,255, 0.5)',
+              backgroundColor: 'rgba(255,244,255, 0.8)',
             }}>
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title>Income Category</DataTable.Title>
                 <DataTable.Title numeric>Amount</DataTable.Title>
+                <DataTable.Title numeric>actions</DataTable.Title>
               </DataTable.Header>
 
-              <DataTable.Row>
-                <DataTable.Cell>Frozen yogurt</DataTable.Cell>
-                <DataTable.Cell numeric>159</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-                <DataTable.Cell numeric>237</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-                <DataTable.Cell numeric>237</DataTable.Cell>
-              </DataTable.Row>
+              {data.expenditureData.map((e, idx) => {
+                return (
+                  <DataTable.Row key={idx}>
+                    <DataTable.Cell>{e.name}</DataTable.Cell>
+                    <DataTable.Cell numeric>{e.price}</DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {/* sdfk */}
+                      <TouchableOpacity
+                        onPress={() =>
+                          setState({
+                            ...state,
+                            transactions: state.transactions.filter(
+                              each => each.id !== e.id,
+                            ),
+                          })
+                        }>
+                        <Icon name="close" type="ionicon" color="red" />
+                      </TouchableOpacity>
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                );
+              })}
 
               <DataTable.Pagination
                 page={0}
@@ -406,108 +369,47 @@ export default function CashScreen() {
           </View>
         ) : null}
 
-        {categorySelect === 'Income' ? (
-          <View
+        <View
+          style={{
+            height: height * 0.1,
+            width: width,
+            marginVertical: 5,
+            width: width * 0.97,
+            borderRadius: height * 0.03,
+            elevation: 4,
+            shadowColor: '#000',
+            shadowOffset: {width: 1, height: 1},
+            shadowOpacity: 0.5,
+            shadowRadius: 5,
+            justifyContent: 'center',
+            alignSelf: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(255,244,255, 0.8)',
+          }}>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('AddDataScreen')}
             style={{
-              height: height * 0.1,
-              width: width,
-              marginVertical: 5,
-              width: width * 0.97,
-              borderRadius: height * 0.03,
-              elevation: 4,
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.5,
-              shadowRadius: 5,
-              justifyContent: 'center',
-              alignSelf: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(255,244,255, 0.5)',
+              backgroundColor: '#958',
+              padding: 10,
+              margin: 10,
+              borderRadius: 10,
             }}>
-            <TouchableOpacity
+            <Text
               style={{
-                backgroundColor: '#958',
-                padding: 10,
-                margin: 10,
-                borderRadius: 10,
+                fontSize: height * 0.03,
+                fontWeight: 'bold',
+                color: '#fff',
               }}>
-              <Text
-                style={{
-                  fontSize: height * 0.03,
-                  fontWeight: 'bold',
-                  color: '#fff',
-                }}>
-                Add Income
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : categorySelect === 'Expenditure' ? (
-          <View
-            style={{
-              height: height * 0.1,
-              width: width,
-              marginVertical: 5,
-              width: width * 0.97,
-              borderRadius: height * 0.03,
-              elevation: 4,
-              shadowColor: '#000',
-              shadowOffset: {width: 1, height: 1},
-              shadowOpacity: 0.5,
-              shadowRadius: 5,
-              justifyContent: 'center',
-              alignSelf: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(255,244,255, 0.5)',
-            }}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#958',
-                padding: 10,
-                margin: 10,
-                borderRadius: 10,
-              }}>
-              <Text
-                style={{
-                  fontSize: height * 0.03,
-                  fontWeight: 'bold',
-                  color: '#fff',
-                }}>
-                Add Expenditure
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : null}
-
+              Add Transaction
+            </Text>
+          </TouchableOpacity>
+        </View>
         {/* This is BottomTab sheet */}
         <BottomSheet
           isVisible={showBottomSheet}
           containerStyle={{
             backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)',
           }}>
-          <TouchableOpacity
-            onPress={() => setShowBottomSheet(false)}
-            style={{
-              backgroundColor: '#fff',
-              width: width,
-              height: height * 0.1,
-              alignItems: 'center',
-              borderTopRightRadius: height * 0.1,
-              borderTopLeftRadius: height * 0.1,
-
-              justifyContent: 'center',
-            }}>
-            <View>
-              <Text
-                style={{
-                  fontSize: height * 0.03,
-                  fontWeight: 'bold',
-                  color: 'darkred',
-                }}>
-                Cancel
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <Divider />
           <TouchableOpacity
             onPress={() => {
               setShowBottomSheet(false);
@@ -518,6 +420,9 @@ export default function CashScreen() {
               width: width,
               height: height * 0.1,
               alignItems: 'center',
+              borderTopRightRadius: height * 0.1,
+              borderTopLeftRadius: height * 0.1,
+
               justifyContent: 'center',
             }}>
             <View>
@@ -552,6 +457,37 @@ export default function CashScreen() {
                   color: 'darkblue',
                 }}>
                 Expenditure
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <Divider />
+          <TouchableOpacity
+            onPress={() => {
+              setShowBottomSheet(false);
+              setState({
+                ...state,
+                users: {
+                  ...state.users,
+                  isLogin: true,
+                },
+              });
+              props.navigation.navigate('Login');
+            }}
+            style={{
+              backgroundColor: '#fff',
+              width: width,
+              height: height * 0.1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View>
+              <Text
+                style={{
+                  fontSize: height * 0.03,
+                  fontWeight: 'bold',
+                  color: 'darkred',
+                }}>
+                Logout
               </Text>
             </View>
           </TouchableOpacity>
